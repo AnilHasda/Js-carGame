@@ -1,0 +1,381 @@
+<html>
+<head>
+<meta name="viewport"content="width=device-width",initial-scale="1.o">
+<style type="text/css">
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+body{
+background:url("grass.jpeg");
+background-position:center;
+background-size:150px;
+overflow:hidden;
+}
+.car,.enemy{
+position:absolute;
+height:80px;
+width:60px;
+z-index:1;
+}
+.car{
+background:url("car4.png");
+background-size:60px;
+background-repeat:no-repeat;
+bottom:54;
+}
+.enemy{
+color:gold;
+background:url("car2.png");
+background-size:60px;
+background-repeat:no-repeat;
+text-align:center;
+font-size:20;
+}
+
+
+
+.enemy:nth-child(2n){
+background:url("car3.png");
+background-size:60px;
+background-repeat:no-repeat;
+}
+
+.enemy:nth-child(3n-2){
+background:url("car5.png");
+background-size:60px;
+background-repeat:no-repeat;
+}
+button{
+height:50px;
+width:80px;
+position:absolute;
+z-index:2;
+}
+.left,.right{
+bottom:109;
+}
+.right{
+right:0;
+}
+.top,.bottom,.audio{
+bottom:40;
+}
+.audio{
+bottom:0;
+}
+.top{
+right:0;
+}
+.road{
+position:relative;
+height:674px;
+width:200px;
+margin:auto;
+background:gray;
+border:5px dashed cyan;
+z-index:2;
+border-top:none;
+border-bottom:none;
+}
+.lines{
+position:relative;
+height:50px;
+width:7px;
+background:purple;
+left:56.66px;
+animation:sachu 1s linear infinite;
+}
+.lines::after{
+content:'';
+position:absolute;
+height:100%;
+width:100%;
+background:white;
+left:76.66px;
+}
+.lines:nth-child(2n),.lines:nth-child(2n):after{
+background:red;
+}
+.lines:nth-child(4n),.lines:nth-child(4n):after{
+background:cyan;
+}
+@keyframes sachu{
+0%{
+transform:translateY(-50px);
+}
+20%{
+transform:translateY(-10ppx);
+}
+40%{
+transform:translateY(-150px);
+}
+60%{
+transform:translateY(-200px);
+}
+80%{
+transform:translateY(-250px);
+}
+100%{
+transform:translateY(-300px);
+}
+}
+.slow{
+position:absolute;
+left:-90;
+height:100%;
+width:100px;
+background:url("t2.png");
+background-size:100px;
+z-index:2;
+}
+.slow::before{
+content:'';
+position:absolute;
+height:80%;
+width:100%;
+background:url("t.png");
+background-size:70%;
+left:40;
+top:0;
+transform:rotate(0deg);
+}
+.slow::after{
+content:'';
+position:absolute;
+height:100%;
+width:100%;
+background:url("t2.png");
+background-size:100%;
+left:280;
+}
+img{
+}
+.score{
+height:100px;
+width:80px;
+background:gold;
+position:absolute;
+z-index:3;
+display:grid;
+place-items:center;
+}
+#result{
+padding-bottom:30px;
+}
+#hide{
+height:300px;
+width:300px;
+background:#f1f1f1;
+position:absolute;
+top:200;
+z-index:3;
+left:-50;
+text-align:center;
+padding-top:40;
+line-height:1.5;
+}
+#hide button{
+background:gold;
+position:absolute;
+left:110;
+top:220;
+}
+.show{
+display:none;
+}
+#strt{
+position:absolute;
+height:320px;
+width:300px;
+z-index:4;
+background:#f1f1f1;
+top:180;
+left:-50;
+padding:50px 0px 0px 0px;
+text-align:center;
+}
+marquee{
+color:blue;
+}
+h3{
+padding-bottom:20px;
+}
+select{
+margin-bottom:40px;
+}
+.gameStart{
+background:red;
+color:gold;
+height:40px;
+width:100px;
+position:absolute;
+left:100;
+}
+.hide{
+display:none;
+}
+.level{
+width:100%;
+height:30px;
+background:;
+}
+.level:hover{
+background:green;
+}
+img{
+position:absolute;
+width:80px;
+top:0;
+left:115;
+}
+</style>
+</head>
+<body>
+<div class="score"><u>SCORE</u><p id="result"></p></div>
+<div class="road"><div class="show"id="hide"><h3>Game Over<br>Your Final Score<br>=<p id="demo"></p><button onclick="location.reload()">Play Again</button></div>
+
+<div id="strt">
+<img src="/storage/emulated/0/Download/PSYr.gif"></img>
+<marquee><h3>Welcome everyone,Enjoy the Game</h3></marquee>
+<h3>Select Game Level</h3>
+<hr><div class="level" onclick="level(3);">Easy</div><hr>
+<div class="level"onclick="level(4)">Intermediate</div><hr>
+<div class="level" onclick="level(5)">Difficult</div><hr>
+<br>
+<button class="gameStart"onclick="ecarMove(),playCar()">Start A Game</button>
+</div>
+
+
+<div class="slow"></div>
+</div>
+<button onclick="leftt()"class="left">Left</button>
+<button onclick="rightt()"class="right">Right</button>
+<button onclick="bottomm()"class="bottom">Bottom</button>
+<button onclick="playAudio()"class="audio">Play Audio</button>
+<button onclick="topp()"class="top">Top</button>
+<script type="text/javascript">
+
+/*function playCar(){
+let aud=new Audio("carRunning.mp3");
+aud.play();
+}*/
+
+let scr=0;
+let finalScore;
+let score=document.getElementById("hide");
+let result=document.getElementById("result");
+let demo=document.getElementById("demo");
+let road=document.querySelector(".road");
+let c=document.createElement("div");
+c.setAttribute("class","car");
+road.appendChild(c);
+
+let car=document.querySelector(".car");
+let y=car.offsetTop;
+let x=car.offsetLeft;
+let rd=road.getBoundingClientRect();
+let cr=car.getBoundingClientRect();
+//
+function leftt(){
+if(x>0){
+x-=20;
+car.style.left=x+"px";
+}
+}
+//
+function rightt(){
+if(x<rd.width-cr.width){
+x+=20;
+car.style.left=x+"px";
+}
+}
+//
+function topp(){
+if(y>60){
+y-=20;
+car.style.top=y+"px";
+}
+}
+//alert("ecartop0="+ecarTop0+" "+"<br>ecarTop1="+ecarTop1+" "+"ecarTop2="+ecarTop2+"carTop="+y)
+//if(ecarLeft2+60>=x && ecarTop2+40==y ||ecarLeft1+60>=x && ecarTop1+40==y || ecarLeft0>=x && ecarTop0+40==y){
+//
+function bottomm(){
+if(y<rd.height && y<674-60){
+y+=20;
+car.style.top=y+"px";
+}
+}
+//
+function line(){
+for(let i=0;i<=20;i++){
+let line=document.createElement("div");
+line.setAttribute("class","lines");
+line.style.top=i*10+"px";
+road.appendChild(line);
+}
+}
+//
+
+let sp=3;
+level=(level)=>{
+speed.x=level;
+}
+
+let speed={x:sp};
+let ecar={};
+for(let i=0;i<3;i++){
+let ecar=document.createElement("div");
+ecar.setAttribute("class","enemy");
+let b=Math.ceil(Math.random()*140);
+ecar.style.left=b+"px";
+ecar.y=i*230*-1;
+ecar.style.top=ecar.y+"px";
+road.appendChild(ecar);
+}
+function ecarMove(){
+let enemy=document.querySelectorAll(".enemy");
+enemy.forEach((item)=>{
+//
+//let enemies=document.querySelector(".enemy");
+let e=item.getBoundingClientRect();
+let cc=document.querySelector(".car");
+let ac=cc.getBoundingClientRect();
+//console.log(e.right +"  "+cc.offsetLeft)
+if(item.y<674){
+if((ac.top<=e.top+e.height-60 && ac.top+ac.height-60>=e.top) && (ac.left+ac.width>=e.left+5 && ac.left<=e.left+e.width)){
+finalScore=scr;
+result.innerHTML=finalScore;
+demo.innerHTML=finalScore;
+score.classList.remove("show");
+//to stop screen
+jpt
+}
+else{
+scr++;
+}
+//
+item.y +=speed.x;
+item.style.top=item.y+"px";
+}
+else{
+let b=Math.ceil(Math.random()*140);
+item.style.left=b+"px";
+item.y=-20;
+}
+})
+result.innerHTML=scr;
+requestAnimationFrame(ecarMove);
+let select=document.querySelector("#strt");
+select.classList.add("hide");
+}
+//
+function playAudio(){
+let aud=new Audio("jass.mp3");
+aud.play();
+}
+line()
+</script>
+</body>
+</html>
